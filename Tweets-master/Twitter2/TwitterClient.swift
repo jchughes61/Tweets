@@ -128,4 +128,43 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
         
     }
+    
+    func retweetTweetWithID(id: String, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/statuses/retweet/\(id).json",
+            parameters: nil,
+            progress: nil,
+            success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+                let tweet = Tweet(dictionary: response as! NSDictionary)
+                completion(tweet: tweet, error: nil)
+            },
+            failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
+                completion(tweet: nil, error: error)
+        })
+    }
+    
+    func favoriteTweetWithID(id: String, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/favorites/create.json?id=\(id)",
+            parameters: nil,
+            progress: nil,
+            success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+                let tweet = Tweet(dictionary: response as! NSDictionary)
+                completion(tweet: tweet, error: nil)
+            },
+            failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
+                completion(tweet: nil, error: error)
+        })
+    }
+    
+    func createTweetWithText(tweetText: String, completion: (tweet: Tweet?, error: NSError?) -> ()) {
+        POST("1.1/statuses/update.json",
+            parameters: ["status" : tweetText],
+            progress: nil,
+            success: { (task: NSURLSessionDataTask, response: AnyObject?) -> Void in
+                let tweet = Tweet(dictionary: response as! NSDictionary)
+                completion(tweet: tweet, error: nil)
+            },
+            failure: { (task: NSURLSessionDataTask?, error: NSError) -> Void in
+                completion(tweet: nil, error: error)
+        })
+    }
 }
